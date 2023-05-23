@@ -3,9 +3,11 @@ import Image from "next/image";
 
 interface Props {
   dog: Dog;
+  liked: boolean;
+  onLike: (id: string) => void;
 }
 
-export default function DogGridItem({ dog }: Props) {
+export default function DogGridItem({ dog, liked, onLike }: Props) {
   return (
     <div className="card w-3/4 bg-base-100 shadow-xl m-2">
       <figure>
@@ -24,7 +26,12 @@ export default function DogGridItem({ dog }: Props) {
         </h2>
         <p>{dog.breed}</p>
         <div className="card-actions justify-end">
-          <button className="btn btn-primary">Like</button>
+          <button
+            className={liked ? "btn btn-primary" : "btn"}
+            onClick={() => onLike(dog.id)}
+          >
+            Like
+          </button>
         </div>
       </div>
     </div>

@@ -32,7 +32,7 @@ export default function Login() {
         placeholder="Email"
         className="input input-bordered m-2"
       ></input>
-      <button className="btn m-2">Login</button>
+      <button className="btn btn-primary m-2">Login</button>
     </form>
   );
 }

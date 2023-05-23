@@ -7,7 +7,7 @@ interface Props {
 export default function Filter({ onBreedsChange }: Props) {
   return (
     <>
-      <div className="flex justify-center items-center my-4">
+      <div>
         <input
           type="text"
           placeholder="Breed"
