@@ -20,17 +20,17 @@ export type Dog = {
 };
 
 export default function Home() {
-  const [selectedBreed, setSelectedBreed] = useState("Toy Poodle");
+  const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [dogIds, setDogIds] = useState([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
 
   useEffect(() => {
     client
-      .get("/dogs/search", { params: { breeds: selectedBreed } })
+      .get("/dogs/search", { params: { breeds: selectedBreeds } })
       .then((res) => {
         setDogIds(res.data.resultIds);
       });
-  }, [selectedBreed]);
+  }, [selectedBreeds]);
 
   useEffect(() => {
     client.post("/dogs", dogIds).then((res) => {
@@ -40,7 +40,7 @@ export default function Home() {
 
   return (
     <main>
-      <Filter onBreedChange={setSelectedBreed} />
+      <Filter onBreedsChange={setSelectedBreeds} />
       <DogGrid dogs={dogs} />
     </main>
   );

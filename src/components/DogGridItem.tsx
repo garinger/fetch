@@ -19,8 +19,10 @@ export default function DogGridItem({ dog }: Props) {
         />
       </figure>
       <div className="card-body">
-        <h2 className="card-title">{dog.name}</h2>
-        <p>{dog.zip_code}</p>
+        <h2 className="card-title">
+          {dog.name}, {dog.age}
+        </h2>
+        <p>{dog.breed}</p>
         <div className="card-actions justify-end">
           <button className="btn btn-primary">Like</button>
         </div>

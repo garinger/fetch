@@ -1,8 +1,10 @@
+"use client";
+
 interface Props {
-  onBreedChange: (breed: string) => void;
+  onBreedsChange: (breeds: string[]) => void;
 }
 
-export default function Filter({ onBreedChange }: Props) {
+export default function Filter({ onBreedsChange }: Props) {
   return (
     <>
       <div className="flex justify-center items-center my-4">
@@ -10,7 +12,11 @@ export default function Filter({ onBreedChange }: Props) {
           type="text"
           placeholder="Breed"
           className="input input-bordered"
-          onChange={(event) => onBreedChange(event.target.value)}
+          onChange={(event) =>
+            event.target.value === ""
+              ? onBreedsChange([])
+              : onBreedsChange([event.target.value])
+          }
         />
       </div>
     </>
