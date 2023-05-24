@@ -11,7 +11,11 @@ async function TryLogin(formData: FormData) {
     },
     credentials: "include",
     body: JSON.stringify({ name: name, email: email }),
-  }).then((res) => console.log(res));
+  }).then((res) => {
+    if (res.status === 200) {
+      self.location.href = "/";
+    }
+  });
 }
 
 export default function Login() {

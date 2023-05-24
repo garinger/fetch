@@ -24,6 +24,7 @@ export default function DogGridItem({ dog, liked, onLike }: Props) {
         <h2 className="card-title">
           {dog.name}, {dog.age}
         </h2>
+        <p>{dog.zip_code}</p>
         <p>{dog.breed}</p>
         <div className="card-actions justify-end">
           <button
