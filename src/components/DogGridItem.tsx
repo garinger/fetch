@@ -11,14 +11,7 @@ export default function DogGridItem({ dog, liked, onLike }: Props) {
   return (
     <div className="card w-3/4 bg-base-100 shadow-xl m-2">
       <figure>
-        <Image
-          src={dog.img}
-          width={0}
-          height={0}
-          alt={dog.name}
-          sizes="100vw"
-          className="w-full h-auto"
-        />
+        <Image src={dog.img} width={400} height={400} alt={dog.name} />
       </figure>
       <div className="card-body">
         <h2 className="card-title">

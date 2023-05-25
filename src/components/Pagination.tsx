@@ -1,27 +1,32 @@
 "use client";
 
-import { useState } from "react";
-
 interface Props {
-  dogCount: number;
-  onPageChange: (page: number) => void;
+  onPageChange: (next: boolean) => void;
+  nextDisabled: boolean;
+  previousDisabled: boolean;
 }
 
-export default function Pagination({ dogCount, onPageChange }: Props) {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  let pageCount = dogCount / 25;
-  const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
-
-  function handlePageChange(page: number) {
-    setCurrentPage(page);
-    onPageChange(page);
-  }
-
+export default function Pagination({
+  onPageChange,
+  nextDisabled,
+  previousDisabled,
+}: Props) {
   return (
     <div className="btn-group flex justify-center my-12 gap-1">
-      <button className="btn w-36">Previous</button>
-      <button className="btn w-36">Next</button>
+      <button
+        className="btn w-36"
+        onClick={() => onPageChange(false)}
+        disabled={previousDisabled}
+      >
+        Previous
+      </button>
+      <button
+        className="btn w-36"
+        onClick={() => onPageChange(true)}
+        disabled={nextDisabled}
+      >
+        Next
+      </button>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import DogGrid from "@/components/DogGrid";
 import Filter from "@/components/Filter";
 import LogoutButton from "@/components/LogoutButton";
 import MatchButton from "@/components/MatchButton";
+import MatchCard from "@/components/MatchCard";
 import Pagination from "@/components/Pagination";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -22,26 +23,78 @@ export type Dog = {
   breed: string;
 };
 
+type Filters = {
+  breeds?: string[];
+  locations?: string[];
+  minAge?: string;
+  maxAge?: string;
+};
+
 export default function Home() {
+  const [filters, setFilters] = useState<Filters>({
+    breeds: undefined,
+    locations: undefined,
+    minAge: undefined,
+    maxAge: undefined,
+  });
+
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [dogIds, setDogIds] = useState([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [likes, setLikes] = useState<string[]>([]);
   const [matchId, setMatchId] = useState<string[]>([]);
   const [match, setMatch] = useState<Dog>();
+  // Pagination
+  const [currentPage, setCurrentPage] = useState<string>("/dogs/search");
+  const [nextPage, setNextPage] = useState<string>("");
+  const [previousPage, setPreviousPage] = useState<string>("");
 
-  useEffect(() => {
-    setIsLoading(true);
+  const dogsPerPage = 25;
+
+  function fetchDogs() {
     client
-      .get("/dogs/search", { params: { breeds: selectedBreeds } })
+      .get(currentPage, {
+        params: {
+          breeds: filters.breeds,
+          zipCodes: filters.locations,
+          ageMin: filters.minAge,
+          ageMax: filters.maxAge,
+        },
+      })
       .then((res) => {
         setDogIds(res.data.resultIds);
+
+        if (res.data.resultIds.length < dogsPerPage) {
+          setNextPage("");
+        } else {
+          setNextPage(res.data.next);
+        }
+
+        if (res.data.prev) {
+          setPreviousPage(res.data.prev);
+        } else {
+          setPreviousPage("");
+        }
       })
       .catch((err) => {
         self.location.href = "/login";
       });
-  }, [selectedBreeds]);
+  }
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    setNextPage("");
+    setPreviousPage("");
+    setCurrentPage("/dogs/search");
+
+    fetchDogs();
+  }, [filters]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetchDogs();
+  }, [currentPage]);
 
   useEffect(() => {
     client.post("/dogs", dogIds).then((res) => {
@@ -72,8 +125,18 @@ export default function Home() {
     });
   }
 
-  function handlePageChange(pageNumber: number) {
-    console.log(pageNumber);
+  function handlePageChange(next: boolean) {
+    if ((next && !nextPage) || (!next && !previousPage)) return;
+
+    if (next) {
+      setNextPage("");
+      setPreviousPage("");
+      setCurrentPage(nextPage);
+    } else {
+      setNextPage("");
+      setPreviousPage("");
+      setCurrentPage(previousPage);
+    }
   }
 
   function handleLogout() {
@@ -82,19 +145,47 @@ export default function Home() {
     });
   }
 
+  function handleFiltersChange(
+    filter: string,
+    value: string[] | number | string | null
+  ) {
+    setFilters({
+      ...filters,
+      [filter]: value,
+    });
+  }
+
+  function handleCloseMatch() {
+    setMatch(undefined);
+  }
+
   return (
-    <main>
+    <main className="h-full">
       <LogoutButton onClick={handleLogout} />
-      <Filter onBreedsChange={setSelectedBreeds} />
-      <MatchButton onClick={handleMatch} disabled={likes.length < 2} />
       <div className="flex justify-center m-4">
-        <h1>{match?.name}</h1>
+        {match && <MatchCard dog={match} onClose={handleCloseMatch} />}
       </div>
+      <MatchButton onClick={handleMatch} disabled={likes.length < 2} />
+      <Filter
+        onFiltersChange={handleFiltersChange}
+        onClearFilters={() =>
+          setFilters({
+            breeds: undefined,
+            locations: undefined,
+            minAge: undefined,
+            maxAge: undefined,
+          })
+        }
+      />
       {!isLoading ? (
         <div>
           <DogGrid dogs={dogs} likes={likes} onLike={handleLike} />
           {dogs.length > 0 && (
-            <Pagination dogCount={125} onPageChange={handlePageChange} />
+            <Pagination
+              onPageChange={handlePageChange}
+              nextDisabled={nextPage === ""}
+              previousDisabled={previousPage === ""}
+            />
           )}
         </div>
       ) : (

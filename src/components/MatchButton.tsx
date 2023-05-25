@@ -13,7 +13,7 @@ export default function MatchButton({ onClick, disabled }: Props) {
         onClick={onClick}
         disabled={disabled}
       >
-        Find me a dog!
+        Match!
       </button>
     </div>
   );
