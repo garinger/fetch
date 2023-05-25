@@ -22,7 +22,7 @@ export default function Login() {
   return (
     <form
       action={TryLogin}
-      className="flex flex-col justify-center items-center m-4"
+      className="flex flex-col justify-center items-center m-4 my-24"
     >
       <input
         name="name"
